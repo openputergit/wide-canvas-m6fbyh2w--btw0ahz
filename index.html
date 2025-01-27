@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Recruitment Roster Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        body {
+            background: linear-gradient(45deg, #6a89cc, #4a69bd);
+            min-height: 100vh;
+        }
+        .table-container {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="p-4">
+    <div class="max-w-7xl mx-auto">
+        <div class="glass rounded-xl p-6 mb-6">
+            <h1 class="text-3xl font-bold text-white mb-6">Advanced Recruitment Roster Calculator</h1>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block text-white mb-2">Total Approved Posts</label>
+                    <input type="number" id="approvedPosts" class="w-full p-2 rounded bg-white/20 text-white" placeholder="Enter number">
+                </div>
+                <div>
+                    <label class="block text-white mb-2">Total Filled Posts</label>
+                    <input type="number" id="filledPosts" class="w-full p-2 rounded bg-white/20 text-white" placeholder="Enter number">
+                </div>
+            </div>
+            
+            <button onclick="calculateRoster()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-all">
+                Calculate Roster
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="glass rounded-xl p-6">
+                <h2 class="text-xl font-bold text-white mb-4">Horizontal Reservation</h2>
+                <div class="table-container">
+                    <table class="w-full text-white">
+                        <thead>
+                            <tr class="border-b border-white/20">
+                                <th class="p-3 text-left">Category</th>
+                                <th class="p-3 text-left">Percentage</th>
+                                <th class="p-3 text-left">Total Posts</th>
+                                <th class="p-3 text-left">Vacant Posts</th>
+                            </tr>
+                        </thead>
+                        <tbody id="horizontalRosterTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="glass rounded-xl p-6">
+                <h2 class="text-xl font-bold text-white mb-4">Vertical Reservation</h2>
+                <div class="table-container">
+                    <table class="w-full text-white">
+                        <thead>
+                            <tr class="border-b border-white/20">
+                                <th class="p-3 text-left">Category</th>
+                                <th class="p-3 text-left">Percentage</th>
+                                <th class="p-3 text-left">Total Posts</th>
+                                <th class="p-3 text-left">Vacant Posts</th>
+                            </tr>
+                        </thead>
+                        <tbody id="verticalRosterTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculateRoster() {
+            const approvedPosts = parseInt(document.getElementById('approvedPosts').value);
+            const filledPosts = parseInt(document.getElementById('filledPosts').value);
+            
+            if (isNaN(approvedPosts) || isNaN(filledPosts)) {
+                alert('Please enter valid numbers');
+                return;
+            }
+
+            const vacantPosts = approvedPosts - filledPosts;
+            
+            const horizontalCategories = [
+                { name: 'SC', percentage: 13 },
+                { name: 'ST', percentage: 7 },
+                { name: 'VJA', percentage: 3 },
+                { name: 'NTB', percentage: 2.5 },
+                { name: 'NTC', percentage: 3.5 },
+                { name: 'NTD', percentage: 2 },
+                { name: 'SBC', percentage: 2 },
+                { name: 'SEBC', percentage: 10 },
+                { name: 'OBC', percentage: 19 },
+                { name: 'EWS', percentage: 10 },
+                { name: 'Open', percentage: 28 }
+            ];
+
+            const verticalCategories = [
+                { name: 'Women', percentage: 30 },
+                { name: 'Sports', percentage: 5 },
+                { name: 'Physically Handicapped', percentage: 4 },
+                { name: 'Project Affected', percentage: 5 },
+                { name: 'General', percentage: 56 }
+            ];
+
+            updateTable('horizontalRosterTable', horizontalCategories, approvedPosts, vacantPosts);
+            updateTable('verticalRosterTable', verticalCategories, approvedPosts, vacantPosts);
+        }
+
+        function updateTable(tableId, categories, approvedPosts, vacantPosts) {
+            const tableBody = document.getElementById(tableId);
+            tableBody.innerHTML = '';
+
+            categories.forEach(category => {
+                const totalPosts = Math.round((approvedPosts * category.percentage) / 100);
+                const categoryVacant = Math.round((vacantPosts * category.percentage) / 100);
+
+                const row = document.createElement('tr');
+                row.className = 'border-b border-white/20 hover:bg-white/10';
+                row.innerHTML = `
+                    <td class="p-3">${category.name}</td>
+                    <td class="p-3">${category.percentage}%</td>
+                    <td class="p-3">${totalPosts}</td>
+                    <td class="p-3">${categoryVacant}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Initialize with empty calculation
+        calculateRoster();
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
